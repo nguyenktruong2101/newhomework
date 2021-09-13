@@ -1,0 +1,38 @@
+[
+    {
+        "name":"Giang Le",
+        "username": "giangle306",
+        "password": "abc1234!",
+        "email": "quynhgiangle206@gmail.com",
+        "emailVerified": true,
+        "userType": ["user", "reporter", "admin"],
+        "followers": []
+    },
+    {
+        "name":"Huu Tri",
+        "username": "huutri",
+        "password": "abc1234!",
+        "email": "wayneking1245@gmail.com",
+        "emailVerified": true,
+        "userType": ["user", "reporter", "admin"],
+        "followers": []
+    },
+    {
+        "name":"David Le",
+        "username": "davidle345",
+        "password": "abc1234!",
+        "email": "reporterdavidcoviaway@gmail.com",
+        "emailVerified": true,
+        "userType": ["user", "reporter"],
+        "followers": []
+    },
+    {
+        "name":"Harry Liu",
+        "username": "harryliu2345",
+        "password": "abc1234!",
+        "email": "harryliucoviawayadm@gmail.com",
+        "emailVerified": true,
+        "userType": ["user", "admin"],
+        "followers": []
+    }
+]
