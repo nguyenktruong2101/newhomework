@@ -40,4 +40,9 @@ app.use('/post_categories', postCategory);
 
 app.use('/vote', voteRoute);
 app.use('/categorize', categorizeRoute);
+
+app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to backend.' });
+});
+
 module.exports = app;
