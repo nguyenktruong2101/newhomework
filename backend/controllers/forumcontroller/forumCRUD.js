@@ -72,25 +72,20 @@ exports.postComment = async (req, res) => {
 
 exports.putComment = async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id);
-        try {
-            const updatedComment = await comment.findByIdAndUpdate(
-                req.params.id,
-                {
-                    $set: req.body,
-                },
-                { new: true }
-            );
-            res.status(200).json(updatedComment);
-        } catch (err) {
-            console.log(err);
-            res.status(500).json(err);
-        }
+        const updatedComment = await Comment.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body,
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedComment);
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
     }
 };
+
 
 exports.deleteComment = async (req, res) => {
     try {
