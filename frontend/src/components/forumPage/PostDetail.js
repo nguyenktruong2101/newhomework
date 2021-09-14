@@ -3,12 +3,18 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import Sidebar from './Sidebar';
 import CreatePost from './CreatePost';
-
+import axios from 'axios';
 export default function PostDetail() {
     const [showCreatePostForm, setShowCreatePostForm] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isEditingComment, setIsEditingComment] = useState(false);
+    const [updateData, setUpdateData] = useState({ title: '', content: '', image: '' });
+    const [updateDataComment, setUpdateDataComment] = useState();
     const { id } = useParams();
     const endPoint = `http://localhost:9000/forums/posts/${id}`;
     const [postDetail, setpostDetail] = useState({});
+    const [contentComment, setContentComment] = useState();
+    const currentUser = JSON.parse(localStorage.getItem("user"))
     const fetchUserInfo = (passId, oldData, setFunction) => {
         fetch(`http://localhost:9000/profile/profiledetails/${passId}`)
             .then((res) => res.json())
@@ -16,6 +22,84 @@ export default function PostDetail() {
                 setFunction({ ...oldData, username: dataProfile.username })
             );
     };
+    {/*Update Delete for Post*/ }
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:9000/forums/posts/${id}`);
+            window.location.replace('/');
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const handleEdit = () => {
+        if (isEditing) {
+            setIsEditing(false);
+        } else {
+            setUpdateData({ title: postDetail.title, content: postDetail.content, image: postDetail.image });
+            setIsEditing(true);
+        }
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        console.log(updateData);
+        try {
+            await axios.put(
+                'http://localhost:9000/forums/posts/' + postDetail._id,
+                updateData
+            );
+            window.location.replace("http://localhost:3000/forum/post/postdetail/" + postDetail._id);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    {/*Update Delete for Comment*/ }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const newComment = {
+            content: contentComment,
+            post_id: id,
+        };
+
+        try {
+            await axios.post('http://localhost:9000/forums/comments', newComment);
+            window.location.reload();
+        } catch (err) { }
+    };
+    const handleDeleteComment = async () => {
+        try {
+            await axios.delete('http://localhost:9000/forums/comment/');
+            window.location.reload();
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const handleEditComment = () => {
+        if (isEditingComment) {
+            setIsEditingComment(false);
+        } else {
+            setUpdateDataComment({ title: postDetail.title, content: postDetail.content });
+            setIsEditingComment(true);
+        }
+    };
+
+    const handleUpdateComment = async (e) => {
+        e.preventDefault();
+        console.log(updateDataComment);
+        try {
+            await axios.put(
+                'http://localhost:9000/forums/comment/' + postCommentList._id,
+                updateDataComment
+            );
+            window.location.reload();
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
+
 
     const fetchPostDetail = () => {
         fetch(endPoint)
@@ -41,10 +125,10 @@ export default function PostDetail() {
                         .then((res) => res.json())
                         .then(
                             (data) =>
-                                (newElement = {
-                                    ...commentElement,
-                                    username: data.username,
-                                })
+                            (newElement = {
+                                ...commentElement,
+                                username: data.username,
+                            })
                         )
                         .then((res) =>
                             setPostCommentList((postCommentList) => [
@@ -65,9 +149,8 @@ export default function PostDetail() {
         }
         const months = Math.floor(diffTimeInMs / (1000 * 60 * 60 * 24 * 30));
         if (months > 0) {
-            return `${
-                months > 1 ? `${months} months ago` : `${months} month ago`
-            } `;
+            return `${months > 1 ? `${months} months ago` : `${months} month ago`
+                } `;
         }
         const days = Math.floor(diffTimeInMs / (1000 * 60 * 60 * 24));
         if (days > 0) {
@@ -79,15 +162,13 @@ export default function PostDetail() {
         }
         const minutes = Math.floor(diffTimeInMs / (1000 * 60));
         if (minutes > 0) {
-            return `${
-                minutes > 1 ? `${minutes} minutes ago` : `${minutes} minute ago`
-            } `;
+            return `${minutes > 1 ? `${minutes} minutes ago` : `${minutes} minute ago`
+                } `;
         }
         const seconds = Math.floor(diffTimeInMs / 1000);
         if (seconds > 0) {
-            return `${
-                seconds > 1 ? `${seconds} seconds ago` : `${seconds} second ago`
-            } `;
+            return `${seconds > 1 ? `${seconds} seconds ago` : `${seconds} second ago`
+                } `;
         }
     };
     useEffect(() => {
@@ -112,8 +193,20 @@ export default function PostDetail() {
                         <article>
                             {console.log(postCommentList)}
                             <header class='my-4'>
-                                <h1 class='fw-bolder'>{postDetail.title}</h1>
-                                <p class='text-muted fst-italic'>
+                                {isEditing ? (
+                                    <textarea
+                                        onChange={(e) =>
+                                            setUpdateData({
+                                                ...updateData,
+                                                title: e.target.value,
+                                            })
+                                        }
+                                    >
+                                        {postDetail.title}
+                                    </textarea>
+                                ) : (
+                                    <h1 className='fw-bolder'>{postDetail.title}</h1>
+                                )}                                <p class='text-muted fst-italic'>
                                     Last edited{' '}
                                     {countTimeDiff(postDetail.updatedAt)} by{' '}
                                     {postDetail.username}
@@ -128,45 +221,90 @@ export default function PostDetail() {
                                     </button>
                                 </p>
                             </header>
-                            <figure class='img-fluid'>
-                                <img
-                                    src='https://img.buzzfeed.com/buzzfeed-static/static/2016-01/22/17/campaign_images/webdr14/19-hermosos-regalos-para-gente-obsesionada-con-fr-2-25600-1453503418-3_dblbig.jpg'
-                                    class='figure-img img-fluid rounded'
-                                    alt='A generic square placeholder image with rounded corners in a figure.'
-                                />
-                                <figcaption class='figure-caption'>
+
+                            {isEditing ? (
+                                <input
+                                    type='file'
+                                    class='custom-file-input'
+                                    id='inputGroupFile01'
+                                    onChange={(e) =>
+                                        setUpdateData(e.target.files[0])
+                                    }
+                                />) : (<figure class='img-fluid'>
+                                    {/*<img src={`/postUpload/${postDetail.image}`} style ={{"opacity": "32%", "maxWidth": "1500px", "maxHeight": "300px"}}class="d-block w-100 img-fluid" alt="..." />*/}
                                     A caption for the above image.
-                                </figcaption>
-                            </figure>
-                            <section
-                                class='mb-4 '
-                                style={{ textAlign: 'justify' }}
-                            >
-                                <p class='lh-base mb-4 fs-5 lead'>
-                                    {postDetail.content}
-                                </p>
+                                </figure>
+
+                            )
+                            }
+                            <section className='mb-4 ' style={{ textAlign: 'justify' }}>
+                                {isEditing ? (
+                                    <textarea
+                                        onChange={(e) =>
+                                            setUpdateData({
+                                                ...updateData,
+                                                content: e.target.value,
+                                            })
+                                        }
+                                    >
+                                        {postDetail.content}
+                                    </textarea>
+                                ) : (
+                                    <p className='lh-base mb-4 fs-5 lead'>
+                                        {postDetail.content}
+                                    </p>
+                                )}
                             </section>
+
+                            <button
+                                type='button'
+                                className='btn btn-danger'
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </button>
+                            <button
+                                type='button'
+                                className='btn btn-secondary'
+                                onClick={handleEdit}
+                            >
+                                Edit
+                            </button>
+                            {isEditing && (
+                                <button
+                                    type='button'
+                                    className='btn btn-secondary'
+                                    onClick={handleUpdate}
+                                >
+                                    Update
+                                </button>
+                            )}
                         </article>
                         <section>
                             <div class='mt-5'>
                                 <div class='card bg-light'>
                                     <div class='card-body container'>
                                         <div class='row'>
-                                            <form class='my-4 mx-2'>
-                                                <div class='form-floating'>
+                                            <form class='my-4 mx-2'
+                                                onSubmit={handleSubmit}>
+                                                <div className='form-floating'>
                                                     <textarea
-                                                        class='form-control'
+                                                        className='form-control'
                                                         placeholder='Leave a comment here'
                                                         id='floatingTextarea2'
-                                                        style={{
-                                                            height: '100px',
-                                                        }}
+                                                        style={{ height: '100px' }}
+                                                        onChange={(e) =>
+                                                            setContentComment(e.target.value)
+                                                        }
                                                     ></textarea>
                                                     <label for='floatingTextarea2'>
                                                         Comments
                                                     </label>
                                                 </div>
-                                                <button class='btn btn-dark mt-3 pull-right'>
+                                                <button
+                                                    type='submit'
+                                                    className='btn btn-dark mt-3 pull-right'
+                                                >
                                                     Post
                                                 </button>
                                             </form>
@@ -188,11 +326,48 @@ export default function PostDetail() {
                                                                     postComment.username
                                                                 }
                                                             </div>
-                                                            <div>
-                                                                {
-                                                                    postComment.content
-                                                                }
-                                                            </div>
+                                                            {isEditingComment ? (
+                                                                <textarea
+                                                                    onChange={(e) =>
+                                                                        setUpdateData({
+                                                                            ...updateData,
+                                                                            content: e.target.value,
+                                                                        })
+                                                                    }
+                                                                >
+                                                                    {postComment.content}
+                                                                </textarea>) : (
+
+
+                                                                <div>
+                                                                    {
+                                                                        postComment.content
+                                                                    }
+
+                                                                </div>)}
+                                                            <button
+                                                                type='button'
+                                                                className='btn btn-danger'
+                                                                onClick={handleDeleteComment}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                            <button
+                                                                type='button'
+                                                                className='btn btn-secondary'
+                                                                onClick={handleEditComment}
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            {isEditingComment && (
+                                                            <button
+                                                                type='button'
+                                                                className='btn btn-secondary'
+                                                                onClick={handleUpdateComment}
+                                                            >
+                                                                Update
+                                                            </button>)}
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -208,7 +383,7 @@ export default function PostDetail() {
                 <div class='col-3 mt-3'>
                     {/*<button type="button" class="btn btn-dark" style={{ marginLeft: "35%" }} onClick={() => setShowCreatePostForm(!showCreatePostForm)}>{showCreatePostForm ? "Close Form" : "Create New Post"}</button>   */}
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
