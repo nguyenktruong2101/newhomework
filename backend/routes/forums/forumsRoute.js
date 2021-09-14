@@ -1,5 +1,9 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
+const crypto = require("crypto");
+const path = require("path");
 const multer = require('multer');
+const GridFsStorage = require("multer-gridfs-storage");
 const {
     forumPost,
     fetchPostDetail,
@@ -20,19 +24,47 @@ const {
     userComment,
 } = require('../../controllers/forumcontroller/userComment');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './../frontend/public/postUpload');
-    },
-    filename: (req, file, cb) => {
-        cb(null, req.body.name);
-    },
+let gfs;
+mongoose.connection.once('open', () => {
+    // init gfs
+    gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: 'upload'
+    });
 });
 
-const upload = multer({ storage });
+// Storage
+const storage = new GridFsStorage({
+  url: process.env.MONGO_URI,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          return reject(err);
+        }
+        const filename = buf.toString("hex") + path.extname(file.originalname);
+        const fileInfo = {
+          filename: filename,
+          bucketName: "uploads"
+        };
+        resolve(fileInfo);
+      });
+    });
+  }
+});
+
+const upload = multer({
+  storage
+});
 
 router.post('/upload', upload.single('file'), (req, res) => {
-    res.status(200).json('File has been uploaded');
+    res.status(200).json({ msg: 'File has been uploaded' });
+});
+
+router.post("files/del/:id", (req, res) => {
+    gfs.delete(new mongoose.Types.ObjectId(req.params.id), (error, data) => {
+        if (err) return res.status(404).json({ error: error.message })
+        res.status(200).json({ msg: "Deleted file!" });
+    });
 });
 
 router.get('/comment/:id', userComment);

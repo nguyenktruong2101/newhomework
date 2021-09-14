@@ -1,3 +1,4 @@
+const axios = require('axios').default;
 const Post = require('../../models/posts').post;
 const Comment = require('../../models/comments').comment;
 
@@ -35,6 +36,8 @@ exports.deletePost = async (req, res) => {
         const post = await Post.findById(req.params.id);
         try {
             await post.delete();
+            const result = await axios.post('/files/del/' + post.image);
+            console.log(result);
             res.status(200).json('Post has been deleted...');
         } catch (err) {
             console.log(err);
