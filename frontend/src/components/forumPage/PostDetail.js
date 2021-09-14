@@ -8,7 +8,10 @@ export default function PostDetail() {
     const [showCreatePostForm, setShowCreatePostForm] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isEditingComment, setIsEditingComment] = useState(false);
-    const [updateData, setUpdateData] = useState({ title: '', content: '', image: '' });
+    const [file, setFile] = useState(null);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [comment, setComment] = useState('');
     const [updateDataComment, setUpdateDataComment] = useState();
     const { id } = useParams();
     const endPoint = `http://localhost:9000/forums/posts/${id}`;
@@ -35,30 +38,44 @@ export default function PostDetail() {
         if (isEditing) {
             setIsEditing(false);
         } else {
-            setUpdateData({ title: postDetail.title, content: postDetail.content, image: postDetail.image });
             setIsEditing(true);
         }
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        console.log(updateData);
+        const updatedPost = {
+            title,
+            content,
+            image: file,
+   
+        }; 
+        console.log(updatedPost);
+        if (file) {
+            const data = new FormData();
+            const fileName = Date.now() + file.name;
+            data.append('name', fileName);
+            data.append('file', file);
+            updatedPost.image = fileName;
+            console.log(updatedPost);
+        }
         try {
             await axios.put(
                 'http://localhost:9000/forums/posts/' + postDetail._id,
-                updateData
+                updatedPost 
             );
             window.location.replace("http://localhost:3000/forum/post/postdetail/" + postDetail._id);
         } catch (err) {
             console.log(err);
         }
     };
+    
 
     {/*Update Delete for Comment*/ }
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newComment = {
-            content: contentComment,
+            comment: contentComment,
             post_id: id,
         };
 
@@ -176,6 +193,8 @@ export default function PostDetail() {
         fetchPostComment();
     }, []);
     return (
+        
+        
         <div class='container-fluid'>
             <div className='row'>
                 <div class='col-3 ps-5 pe-5'>
@@ -195,12 +214,10 @@ export default function PostDetail() {
                             <header class='my-4'>
                                 {isEditing ? (
                                     <textarea
-                                        onChange={(e) =>
-                                            setUpdateData({
-                                                ...updateData,
-                                                title: e.target.value,
-                                            })
-                                        }
+                                    onChange={(e) =>
+                                        setTitle(e.target.value)
+                                    }
+                                        
                                     >
                                         {postDetail.title}
                                     </textarea>
@@ -228,7 +245,7 @@ export default function PostDetail() {
                                     class='custom-file-input'
                                     id='inputGroupFile01'
                                     onChange={(e) =>
-                                        setUpdateData(e.target.files[0])
+                                        setFile(e.target.files[0])
                                     }
                                 />) : (<figure class='img-fluid'>
                                     {/*<img src={`/postUpload/${postDetail.image}`} style ={{"opacity": "32%", "maxWidth": "1500px", "maxHeight": "300px"}}class="d-block w-100 img-fluid" alt="..." />*/}
@@ -240,12 +257,9 @@ export default function PostDetail() {
                             <section className='mb-4 ' style={{ textAlign: 'justify' }}>
                                 {isEditing ? (
                                     <textarea
-                                        onChange={(e) =>
-                                            setUpdateData({
-                                                ...updateData,
-                                                content: e.target.value,
-                                            })
-                                        }
+                                    onChange={(e) => {
+                                        setContent(e.target.value);
+                                    }}
                                     >
                                         {postDetail.content}
                                     </textarea>
@@ -327,12 +341,12 @@ export default function PostDetail() {
                                                                 }
                                                             </div>
                                                             {isEditingComment ? (
+                                                                
                                                                 <textarea
                                                                     onChange={(e) =>
-                                                                        setUpdateData({
-                                                                            ...updateData,
-                                                                            content: e.target.value,
-                                                                        })
+                                                                        setComment(
+                                                                             e.target.value,
+                                                                        )
                                                                     }
                                                                 >
                                                                     {postComment.content}

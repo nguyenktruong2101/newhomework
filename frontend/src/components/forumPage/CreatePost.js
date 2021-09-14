@@ -1,10 +1,11 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 export default function CreatePost(props) {
+
 
 
 const validationSchema = Yup.object().shape({
@@ -14,14 +15,7 @@ const validationSchema = Yup.object().shape({
     content: Yup.string()
         .required('Content is required')
         .matches(/^[a-zA-Z0-9 ?,.$'"-:+_()@!%*#?&\/\\(\r\n|\r|\n)]+$/, 'Content cannot contain certain special characters. Be careful with apostrophe. The valid one is " \' "'),
-    image: Yup.mixed()
-        .test("fileName", "Image is required", (value) => {
-            if (value.length) {
-                return true // attachment is optional
-            }
-            return false
-        })
-        
+    image: Yup.mixed()        
         .test("fileSize", "The file is too large", (value) => {
             if (!value.length) {
                 return true // attachment is optional
@@ -34,7 +28,7 @@ const validationSchema = Yup.object().shape({
             }
             return value[0].type === "image/jpeg" || value[0].type === "image/png"
         }),
-    category: Yup.string()
+    cat: Yup.string()
         .test("value", "Category is required", (value) => {
             if (value === "0") {
                 return false
@@ -42,7 +36,7 @@ const validationSchema = Yup.object().shape({
             return true
         })
     });
-    const { register, submit, reset, formState: { errors } } = useForm({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
         resolver: yupResolver(validationSchema)
     });
 
@@ -71,15 +65,13 @@ const validationSchema = Yup.object().shape({
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const submit = async (e) => {
         const newPost = {
             title,
             content,
             image: file,
-            post_category_id: id,
-        
+            post_category_id: id, //id tưởng của user chứ. nếu sai thì sửa lại là e.category
+   
         }; 
 
         if (file) {
@@ -98,6 +90,20 @@ const validationSchema = Yup.object().shape({
             await axios.post('http://localhost:9000/forums/posts', newPost);
             window.location.reload();
         } catch (err) {}
+
+        //Recommend nên dùng formdata.append cho mấy cái properties còn lại luôn, rồi xong post cái formdata thôi
+        // const data = new FormData();
+        // data.append("title", e.title)
+        // data.append("content", e.content)
+        // data.append("image", e.image[0])
+        // data.append("post_category_id", e.category)
+        // data.append("user_id", ???) // Lấy từ props, pass data từ app.js
+
+        // try {
+        //     await axios.post('http://localhost:9000/forums/posts', data);
+        //     window.location.reload();
+        // } catch (err) {}  
+        
     };
 
     return (
@@ -112,7 +118,7 @@ const validationSchema = Yup.object().shape({
                     </div>
 
                     <div class='card-body container-fluid'>
-                        <form onSubmit={submit(handleSubmit)} enctype="multipart/form-data">
+                        <form onSubmit={handleSubmit(submit)} enctype="multipart/form-data">
                             <div class='row'>
                                 <div class='form-group mb-3 col-7'>
                                     <label for='posttitle'>Title</label>
@@ -137,10 +143,10 @@ const validationSchema = Yup.object().shape({
                                     </label>
                                     <div>
                                         <select
-                                            class={`custom-select  ${errors.category ? 'is-invalid' : ''}`}
+                                            class={`custom-select  ${errors.cat ? 'is-invalid' : ''}`}
                                             id='inputGroupSelect01'
                                             style={{ height: '35px' }}
-                                            {...register('category')}
+                                            {...register('cat')}
                                             onChange={(e) =>
                                                 setId(e.target.value)
                                             }
@@ -156,7 +162,7 @@ const validationSchema = Yup.object().shape({
                                         </select>
                                         <div 
                                         className="invalid-feedback">
-                                            {errors.category?.message}
+                                            {errors.cat?.message}
                                             </div>
                                     </div>
                                 </div>
@@ -216,4 +222,3 @@ const validationSchema = Yup.object().shape({
         </div>
     );
 };
-
