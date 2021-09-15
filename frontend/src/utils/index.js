@@ -1,3 +1,5 @@
+import lodash from 'lodash';
+
 export const countTimeDiff = (time) => {
     const diffTimeInMs = Date.now() - new Date(time);
     const years = Math.floor(diffTimeInMs / (1000 * 60 * 60 * 24 * 365));

@@ -55,7 +55,6 @@ const PostDetail = () => {
                     value[0].type === 'image/png'
                 );
             }),
-
     });
     const {
         register,
@@ -65,9 +64,6 @@ const PostDetail = () => {
     } = useForm({
         resolver: yupResolver(validationSchema),
     });
-
-
-
 
     useEffect(() => {
         fetchPostDetail();
@@ -87,12 +83,9 @@ const PostDetail = () => {
             const res = await axios.get(
                 'http://localhost:9000/post_categories/'
             );
-            console.log('ressssss', res);
             const myCat = res?.data || {};
             setCatId(myCat);
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     };
     {
         /*Update Delete for Post*/
@@ -101,9 +94,7 @@ const PostDetail = () => {
         try {
             await axios.delete(`http://localhost:9000/forums/posts/${id}`);
             window.location.replace('/');
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     };
     const handleEdit = () => {
         if (isEditing) {
@@ -114,7 +105,6 @@ const PostDetail = () => {
     };
 
     const handleUpdate = async (e) => {
-
         e.preventDefault();
         const updatedPost = {
             title,
@@ -122,14 +112,13 @@ const PostDetail = () => {
             image: file,
             post_category_id: cate,
         };
-        console.log(updatedPost);
+
         if (file) {
             const data = new FormData();
             const fileName = Date.now() + file.name;
             data.append('name', fileName);
             data.append('file', file);
             updatedPost.image = fileName;
-            console.log(updatedPost);
         }
         try {
             await axios.put(
@@ -139,16 +128,13 @@ const PostDetail = () => {
             window.location.replace(
                 'http://localhost:3000/forum/post/postdetail/' + postDetail._id
             );
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     };
 
     const fetchPostDetail = () => {
         fetch(endPoint)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 fetchUserInfo(data.user_id, data, setpostDetail);
             });
         //   fetch(`http://localhost:9000/profile/profiledetails/${data.user_id}`)
@@ -168,10 +154,10 @@ const PostDetail = () => {
                         .then((res) => res.json())
                         .then(
                             (data) =>
-                            (newElement = {
-                                ...commentElement,
-                                username: data.username,
-                            })
+                                (newElement = {
+                                    ...commentElement,
+                                    username: data.username,
+                                })
                         )
                         .then((res) =>
                             setPostCommentList((postCommentList) => [
@@ -208,22 +194,21 @@ const PostDetail = () => {
                                         <>
                                             <textarea
                                                 placeholder='Enter new title'
-                                                class={`form-control border border-secondary ${errors.title ? 'is-invalid' : ''
-                                                    }`}
+                                                class={`form-control border border-secondary ${
+                                                    errors.title
+                                                        ? 'is-invalid'
+                                                        : ''
+                                                }`}
                                                 onChange={(e) =>
                                                     setTitle(e.target.value)
                                                 }
                                                 {...register('title')}
-                                            >
-
-                                            </textarea>
+                                            ></textarea>
                                             <div className='invalid-feedback'>
                                                 {errors.title?.message}
-                                            </div> </>
-
-                                    ) : (null
-
-                                    )}{' '}
+                                            </div>{' '}
+                                        </>
+                                    ) : null}{' '}
                                     <p class='text-muted fst-italic'>
                                         Last edited{' '}
                                         {countTimeDiff(postDetail.updatedAt)} by{' '}
@@ -240,7 +225,11 @@ const PostDetail = () => {
                                     </p>
                                 </header>
                                 <figure class='img-fluid'>
-                                    <img src={`/postUpload/${postDetail.image}`} class="d-block w-100 img-fluid" alt="..." />
+                                    <img
+                                        src={`/postUpload/${postDetail.image}`}
+                                        class='d-block w-100 img-fluid'
+                                        alt='...'
+                                    />
                                     A caption for the above image.
                                 </figure>
 
@@ -249,12 +238,11 @@ const PostDetail = () => {
                                         type='file'
                                         class='custom-file-input'
                                         id='inputGroupFile01'
-                                        onChange={(e) => setFile(e.target.files[0])}
+                                        onChange={(e) =>
+                                            setFile(e.target.files[0])
+                                        }
                                     />
-
-                                ) : (null
-
-                                )}
+                                ) : null}
                                 <section
                                     className='mb-4 '
                                     style={{ textAlign: 'justify' }}
@@ -270,22 +258,23 @@ const PostDetail = () => {
                                                 onChange={(e) => {
                                                     setContent(e.target.value);
                                                 }}
-                                            >
-                                            </textarea>
+                                            ></textarea>
                                             <div className='invalid-feedback'>
                                                 {errors.content?.message}
-                                            </div> </>
-                                    ) : (null
-
-                                    )}
-
+                                            </div>{' '}
+                                        </>
+                                    ) : null}
                                 </section>
                                 <section>
                                     {isEditing ? (
                                         <>
                                             <select
-                                                class={`custom-select  ${errors.post_category_id ? 'is-invalid' : ''
-                                                    }`} id='inputGroupSelect01'
+                                                class={`custom-select  ${
+                                                    errors.post_category_id
+                                                        ? 'is-invalid'
+                                                        : ''
+                                                }`}
+                                                id='inputGroupSelect01'
                                                 style={{ height: '35px' }}
                                                 {...register('category')}
                                                 onChange={(e) =>
@@ -303,9 +292,9 @@ const PostDetail = () => {
                                             </select>
                                             <div className='invalid-feedback'>
                                                 {errors.category?.message}
-                                            </div> </>
-                                    ) : (null)
-                                    }
+                                            </div>{' '}
+                                        </>
+                                    ) : null}
                                 </section>
 
                                 {currentUser.id === postDetail.user_id && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import lodash from 'lodash';
 import { useParams } from 'react-router';
@@ -30,7 +30,6 @@ const CommentSection = ({}) => {
                                 `http://localhost:9000/profile/profiledetails/${userId}`
                             )
                             .then((result) => {
-                                console.log('result', result?.data);
                                 if (result?.data) {
                                     const { username, name } = result.data;
                                     modified.push({
@@ -60,6 +59,18 @@ const CommentSection = ({}) => {
         window.location.reload();
     };
 
+    const handleChangeComment = (e) => {
+        const debounce = lodash.debounce(
+            (value) => setContentComment(value),
+            300
+        );
+        debounce(e.target.value);
+    };
+
+    useEffect(() => {
+        console.log(contentComment);
+    }, [contentComment]);
+
     return (
         <section>
             <div class='mt-5'>
@@ -75,9 +86,7 @@ const CommentSection = ({}) => {
                                         style={{
                                             height: '100px',
                                         }}
-                                        onChange={(e) =>
-                                            setContentComment(e.target.value)
-                                        }
+                                        onChange={handleChangeComment}
                                     />
                                     <label for='floatingTextarea2'>
                                         Comments
@@ -109,14 +118,10 @@ const CommentObject = ({ data }) => {
     const currentComment = useRef(content);
     const currentUser = JSON.parse(localStorage.getItem('user'));
 
-    useEffect(() => {
-        console.log('data', data);
-    }, []);
-
     const handleDeleteComment = () => {
         axios
             .delete(`http://localhost:9000/forums/comment/${_id}`)
-            .catch((error) => console.log(error))
+            .catch((error) => console.error(error))
             .finally(() => window.location.reload());
     };
 
@@ -137,7 +142,7 @@ const CommentObject = ({ data }) => {
                 .put(`http://localhost:9000/forums/comment/${_id}`, {
                     content: updateDataComment,
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => console.error(error))
                 .finally(() => {
                     setIsEditing(false);
                     window.location.reload();

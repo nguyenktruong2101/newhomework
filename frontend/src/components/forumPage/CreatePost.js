@@ -66,7 +66,6 @@ export default function CreatePost(props) {
             const res = await axios.get(
                 'http://localhost:9000/post_categories/'
             );
-            console.log('ressssss', res);
             const myCat = res?.data || {};
             setCat(myCat);
         } catch (err) {
@@ -89,7 +88,6 @@ export default function CreatePost(props) {
             data.append('name', fileName);
             data.append('file', file);
             newPost.image = fileName;
-            console.log(newPost);
             try {
                 await axios.post('http://localhost:9000/forums/upload', data);
             } catch (err) {}

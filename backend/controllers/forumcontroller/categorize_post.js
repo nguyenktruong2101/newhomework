@@ -12,7 +12,6 @@ exports.categorize_by_posts = async (req, res) => {
         if (err) {
             return res.send(err);
         }
-        console.log(typeof posts.post_category_id);
         if (posts) {
             res.send(posts);
         }

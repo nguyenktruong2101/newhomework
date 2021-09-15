@@ -9,7 +9,6 @@ exports.postPost = async (req, res) => {
         const savedPost = await newPost.save();
         res.status(200).json(savedPost);
     } catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 };
@@ -25,8 +24,6 @@ exports.putPost = async (req, res) => {
         );
         res.status(200).json(updatedPost);
     } catch (err) {
-        console.log(err);
-
         res.status(500).json(err);
     }
 };
@@ -37,15 +34,12 @@ exports.deletePost = async (req, res) => {
         try {
             await post.delete();
             const result = await axios.post('/files/del/' + post.image);
-            console.log(result);
             res.status(200).json('Post has been deleted...');
         } catch (err) {
-            console.log(err);
             res.status(500).json(err);
         }
     } catch (err) {
         res.status(500).json(err);
-        console.log(err);
     }
 };
 
@@ -65,7 +59,6 @@ exports.postComment = async (req, res) => {
         const savedComment = await newComment.save();
         res.status(200).json(savedComment);
     } catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 };
@@ -81,11 +74,9 @@ exports.putComment = async (req, res) => {
         );
         res.status(200).json(updatedComment);
     } catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 };
-
 
 exports.deleteComment = async (req, res) => {
     try {
@@ -94,11 +85,9 @@ exports.deleteComment = async (req, res) => {
             await comment.delete();
             res.status(200).json('Comment has been deleted...');
         } catch (err) {
-            console.log(err);
             res.status(500).json(err);
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 };
@@ -108,7 +97,6 @@ exports.getComment = async (req, res) => {
         const comment = await Comment.findById(req.params.id);
         res.status(200).json(comment);
     } catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 };
