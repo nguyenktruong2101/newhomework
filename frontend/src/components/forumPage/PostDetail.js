@@ -26,45 +26,6 @@ const PostDetail = () => {
     const endPoint = `http://localhost:9000/forums/posts/${id}`;
     const [postDetail, setpostDetail] = useState({});
     const currentUser = JSON.parse(localStorage.getItem('user'));
-    const validationSchema = Yup.object().shape({
-        title: Yup.string()
-            .required('Title is required')
-            .matches(
-                /^[a-zA-Z0-9 ?.$'"-_()@!%*#?&\/\\]+$/,
-                'Title cannot contain certain special characters'
-            ),
-        content: Yup.string()
-            .required('Content is required')
-            .matches(
-                /^[a-zA-Z0-9 ?,.$'"-:+_()@!%*#?&\/\\(\r\n|\r|\n)]+$/,
-                'Content cannot contain certain special characters. Be careful with apostrophe. The valid one is " \' "'
-            ),
-        image: Yup.mixed()
-            .test('fileSize', 'The file is too large', (value) => {
-                if (!value.length) {
-                    return true; // attachment is optional
-                }
-                return value[0].size <= 2000000;
-            })
-            .test('fileType', 'Only jpeg/png file is accepted', (value) => {
-                if (!value.length) {
-                    return true; // attachment is optional
-                }
-                return (
-                    value[0].type === 'image/jpeg' ||
-                    value[0].type === 'image/png'
-                );
-            }),
-
-    });
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm({
-        resolver: yupResolver(validationSchema),
-    });
 
 
 
@@ -114,8 +75,6 @@ const PostDetail = () => {
     };
 
     const handleUpdate = async (e) => {
-
-        e.preventDefault();
         const updatedPost = {
             title,
             content,
@@ -199,27 +158,21 @@ const PostDetail = () => {
                     {showCreatePostForm && <CreatePost />}
                     <div class='row'>
                         <article>
-                            <form onSubmit={handleSubmit(handleUpdate)}>
                                 <header class='my-4'>
                                     <h1 className='fw-bolder'>
                                         {postDetail.title}
                                     </h1>
                                     {isEditing ? (
-                                        <>
                                             <textarea
                                                 placeholder='Enter new title'
-                                                class={`form-control border border-secondary ${errors.title ? 'is-invalid' : ''
-                                                    }`}
+                                                class='form-control border border-secondary'
+                                                   
                                                 onChange={(e) =>
                                                     setTitle(e.target.value)
-                                                }
-                                                {...register('title')}
-                                            >
+                                                }                                            >
 
                                             </textarea>
-                                            <div className='invalid-feedback'>
-                                                {errors.title?.message}
-                                            </div> </>
+
 
                                     ) : (null
 
@@ -263,18 +216,14 @@ const PostDetail = () => {
                                         {postDetail.content}
                                     </p>
                                     {isEditing ? (
-                                        <>
                                             <textarea
                                                 placeholder='Please enter content'
-                                                {...register('content')}
                                                 onChange={(e) => {
                                                     setContent(e.target.value);
                                                 }}
                                             >
                                             </textarea>
-                                            <div className='invalid-feedback'>
-                                                {errors.content?.message}
-                                            </div> </>
+
                                     ) : (null
 
                                     )}
@@ -282,12 +231,10 @@ const PostDetail = () => {
                                 </section>
                                 <section>
                                     {isEditing ? (
-                                        <>
                                             <select
-                                                class={`custom-select  ${errors.post_category_id ? 'is-invalid' : ''
-                                                    }`} id='inputGroupSelect01'
+                                                class='custom-select'  
+                                                id='inputGroupSelect01'
                                                 style={{ height: '35px' }}
-                                                {...register('category')}
                                                 onChange={(e) =>
                                                     setCate(e.target.value)
                                                 }
@@ -301,9 +248,7 @@ const PostDetail = () => {
                                                     </option>
                                                 ))}
                                             </select>
-                                            <div className='invalid-feedback'>
-                                                {errors.category?.message}
-                                            </div> </>
+
                                     ) : (null)
                                     }
                                 </section>
@@ -328,13 +273,14 @@ const PostDetail = () => {
                                 )}
                                 {isEditing && (
                                     <button
-                                        type='submit'
+                                        type='button'
                                         className='btn btn-secondary'
+                                        onClick={handleUpdate}
                                     >
                                         Update
                                     </button>
                                 )}
-                            </form>
+                            {/* </form> */}
                         </article>
                         <CommentSection />
                     </div>
