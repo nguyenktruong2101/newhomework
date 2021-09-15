@@ -26,6 +26,7 @@ const PostDetail = () => {
     const endPoint = `http://localhost:9000/forums/posts/${id}`;
     const [postDetail, setpostDetail] = useState({});
     const currentUser = JSON.parse(localStorage.getItem('user'));
+<<<<<<< HEAD
     const validationSchema = Yup.object().shape({
         title: Yup.string()
             .required('Title is required')
@@ -64,6 +65,8 @@ const PostDetail = () => {
     } = useForm({
         resolver: yupResolver(validationSchema),
     });
+=======
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
 
     useEffect(() => {
         fetchPostDetail();
@@ -105,7 +108,10 @@ const PostDetail = () => {
     };
 
     const handleUpdate = async (e) => {
+<<<<<<< HEAD
         e.preventDefault();
+=======
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
         const updatedPost = {
             title,
             content,
@@ -185,15 +191,14 @@ const PostDetail = () => {
                     {showCreatePostForm && <CreatePost />}
                     <div class='row'>
                         <article>
-                            <form onSubmit={handleSubmit(handleUpdate)}>
                                 <header class='my-4'>
                                     <h1 className='fw-bolder'>
                                         {postDetail.title}
                                     </h1>
                                     {isEditing ? (
-                                        <>
                                             <textarea
                                                 placeholder='Enter new title'
+<<<<<<< HEAD
                                                 class={`form-control border border-secondary ${
                                                     errors.title
                                                         ? 'is-invalid'
@@ -209,6 +214,20 @@ const PostDetail = () => {
                                             </div>{' '}
                                         </>
                                     ) : null}{' '}
+=======
+                                                class='form-control border border-secondary'
+                                                   
+                                                onChange={(e) =>
+                                                    setTitle(e.target.value)
+                                                }                                            >
+
+                                            </textarea>
+
+
+                                    ) : (null
+
+                                    )}{' '}
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
                                     <p class='text-muted fst-italic'>
                                         Last edited{' '}
                                         {countTimeDiff(postDetail.updatedAt)} by{' '}
@@ -251,32 +270,42 @@ const PostDetail = () => {
                                         {postDetail.content}
                                     </p>
                                     {isEditing ? (
-                                        <>
                                             <textarea
                                                 placeholder='Please enter content'
-                                                {...register('content')}
                                                 onChange={(e) => {
                                                     setContent(e.target.value);
                                                 }}
+<<<<<<< HEAD
                                             ></textarea>
                                             <div className='invalid-feedback'>
                                                 {errors.content?.message}
                                             </div>{' '}
                                         </>
                                     ) : null}
+=======
+                                            >
+                                            </textarea>
+
+                                    ) : (null
+
+                                    )}
+
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
                                 </section>
                                 <section>
                                     {isEditing ? (
-                                        <>
                                             <select
+<<<<<<< HEAD
                                                 class={`custom-select  ${
                                                     errors.post_category_id
                                                         ? 'is-invalid'
                                                         : ''
                                                 }`}
+=======
+                                                class='custom-select'  
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
                                                 id='inputGroupSelect01'
                                                 style={{ height: '35px' }}
-                                                {...register('category')}
                                                 onChange={(e) =>
                                                     setCate(e.target.value)
                                                 }
@@ -290,11 +319,17 @@ const PostDetail = () => {
                                                     </option>
                                                 ))}
                                             </select>
+<<<<<<< HEAD
                                             <div className='invalid-feedback'>
                                                 {errors.category?.message}
                                             </div>{' '}
                                         </>
                                     ) : null}
+=======
+
+                                    ) : (null)
+                                    }
+>>>>>>> 45b3de62e7f2d0d44a2835b7bae8cfbad5feef72
                                 </section>
 
                                 {currentUser.id === postDetail.user_id && (
@@ -317,13 +352,14 @@ const PostDetail = () => {
                                 )}
                                 {isEditing && (
                                     <button
-                                        type='submit'
+                                        type='button'
                                         className='btn btn-secondary'
+                                        onClick={handleUpdate}
                                     >
                                         Update
                                     </button>
                                 )}
-                            </form>
+                            {/* </form> */}
                         </article>
                         <CommentSection />
                     </div>
