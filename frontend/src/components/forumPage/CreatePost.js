@@ -114,26 +114,26 @@ export default function CreatePost(props) {
 
     return (
         <div>
-            <div class='pt-3'>
-                <div class='card mb-4'>
+            <div className='pt-3'>
+                <div className='card mb-4'>
                     <div
-                        class='card-header text-center'
+                        className='card-header text-center'
                         id='post-{{$post->id}}'
                     >
                         CREATE NEW POST
                     </div>
 
-                    <div class='card-body container-fluid'>
+                    <div className='card-body container-fluid'>
                         <form
                             onSubmit={handleSubmit(submit)}
                             enctype='multipart/form-data'
                         >
-                            <div class='row'>
-                                <div class='form-group mb-3 col-7'>
+                            <div className='row'>
+                                <div className='form-group mb-3 col-7'>
                                     <label for='posttitle'>Title</label>
                                     <input
                                         type='text'
-                                        class={`form-control border border-secondary ${
+                                        className={`form-control border border-secondary ${
                                             errors.title ? 'is-invalid' : ''
                                         }`}
                                         placeholder='Post Title'
@@ -147,13 +147,13 @@ export default function CreatePost(props) {
                                         {errors.title?.message}
                                     </div>
                                 </div>
-                                <div class='form-group mb-3 col-5'>
+                                <div className='form-group mb-3 col-5'>
                                     <label for='inputGroupSelect01'>
                                         Category
                                     </label>
                                     <div>
                                         <select
-                                            class={`custom-select  ${
+                                            className={`custom-select  ${
                                                 errors.cat ? 'is-invalid' : ''
                                             }`}
                                             id='inputGroupSelect01'
@@ -178,10 +178,10 @@ export default function CreatePost(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div class='form-group mb-3'>
+                            <div className='form-group mb-3'>
                                 <label for='postcontent'>Content</label>
                                 <textarea
-                                    class={`form-control border border-secondary ${
+                                    className={`form-control border border-secondary ${
                                         errors.content ? 'is-invalid' : ''
                                     }`}
                                     placeholder='Post Content'
@@ -196,10 +196,10 @@ export default function CreatePost(props) {
                                 </div>
                             </div>
 
-                            <div class='form-group mb-3'>
-                                <div class='custom-file'>
+                            <div className='form-group mb-3'>
+                                <div className='custom-file'>
                                     <label
-                                        class='custom-file-label'
+                                        className='custom-file-label'
                                         for='inputGroupFile01'
                                     >
                                         Upload Image
@@ -207,7 +207,7 @@ export default function CreatePost(props) {
                                     <br />
                                     <input
                                         type='file'
-                                        class={`custom-file-input ${
+                                        className={`custom-file-input ${
                                             errors.image ? 'is-invalid' : ''
                                         }`}
                                         id='inputGroupFile01'
@@ -222,9 +222,12 @@ export default function CreatePost(props) {
                                 </div>
                             </div>
 
-                            <span class='pull-right'>
+                            <span className='pull-right'>
                                 &nbsp;&nbsp;
-                                <button type='submit' class='btn btn-primary'>
+                                <button
+                                    type='submit'
+                                    className='btn btn-primary'
+                                >
                                     Upload
                                 </button>
                             </span>

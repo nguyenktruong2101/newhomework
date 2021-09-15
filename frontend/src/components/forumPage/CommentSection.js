@@ -73,11 +73,11 @@ const CommentSection = ({}) => {
 
     return (
         <section>
-            <div class='mt-5'>
-                <div class='card bg-light'>
-                    <div class='card-body container'>
-                        <div class='row'>
-                            <form class='my-4 mx-2' onSubmit={handleSubmit}>
+            <div className='mt-5'>
+                <div className='card bg-light'>
+                    <div className='card-body container'>
+                        <div className='row'>
+                            <form className='my-4 mx-2' onSubmit={handleSubmit}>
                                 <div className='form-floating'>
                                     <textarea
                                         className='form-control'
@@ -88,7 +88,7 @@ const CommentSection = ({}) => {
                                         }}
                                         onChange={handleChangeComment}
                                     />
-                                    <label for='floatingTextarea2'>
+                                    <label htmlFor='floatingTextarea2'>
                                         Comments
                                     </label>
                                 </div>
@@ -157,17 +157,17 @@ const CommentObject = ({ data }) => {
     // }
 
     return (
-        <div class='row' key={_id}>
-            <div class='d-flex mb-4'>
-                <div class='flex-shrink-0'>
+        <div className='row' key={_id}>
+            <div className='d-flex mb-4'>
+                <div className='flex-shrink-0'>
                     <img
-                        class='rounded-circle'
+                        className='rounded-circle'
                         src='https://dummyimage.com/50x50/ced4da/6c757d.jpg'
                         alt='...'
                     />
                 </div>
-                <div class='ms-3'>
-                    <div class='fw-bold'>{username}</div>
+                <div className='ms-3'>
+                    <div className='fw-bold'>{username}</div>
                     {isEditing ? (
                         <textarea
                             onChange={(e) =>
