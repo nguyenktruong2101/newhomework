@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const auth = require('./routes/signUpLoginRoutes/auth');
 const verifyEmail = require('./routes/signUpLoginRoutes/verifyEmail');
+const verifyResetLink = require('./routes/signUpLoginRoutes/getResetLink');
 
 const newsPageRoute = require('./routes/newpageRoute/fetchNewPageRoute');
 const forumPosts = require('./routes/forums/forumsRoute');
@@ -28,6 +29,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use('/news', newsPageRoute);
 app.use('/auth', auth);
 app.use('/', verifyEmail);
+app.use('/', verifyResetLink);
 app.use('/profile', profileUser);
 app.use('/forums', forumPosts);
 

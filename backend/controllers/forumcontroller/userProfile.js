@@ -7,6 +7,11 @@ exports.getAllUsers= function(req, res){
     userProfile.user.find({},(err, result) =>{
         res.send(result)})
 }
+exports.searchByUsername = function(req, res){
+    userProfile.user.find({username: {"$regex": `${req.params.keyword}`, "$options": "i" }, emailVerified: true}, (err, result) => {
+        res.send(result)
+    })
+}
 
 
 

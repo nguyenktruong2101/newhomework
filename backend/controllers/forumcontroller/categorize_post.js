@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 //Categorize
 
 exports.categorize_by_posts = async (req, res) => {
+    var limitNumber = parseInt(req.query.skip)
     const category = await Post_Category.findOne({
         _id: req.params.category_id,
     });
@@ -12,8 +13,9 @@ exports.categorize_by_posts = async (req, res) => {
         if (err) {
             return res.send(err);
         }
+        console.log(typeof posts.post_category_id);
         if (posts) {
             res.send(posts);
         }
-    }).sort({ createdAt: 'desc' });
+    }).sort({ createdAt: 'desc' }).skip(limitNumber * 10).limit(10).limit(10);
 };

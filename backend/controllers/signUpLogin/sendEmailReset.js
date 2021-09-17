@@ -17,7 +17,7 @@ sendSmtpEmail = {
     to: [{
         email: toEmail,
     }],
-    templateId: 2,
+    templateId: 4,
     params: {
         verifyLink: link
     },

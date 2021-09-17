@@ -1,30 +1,27 @@
-const Posts = require('../../models/posts');
-const Post_category = require('../../models/post_category');
 
-exports.forumPost = (req, res) => {
-    Posts.post
-        .find({}, (err, result) => {
-            res.send(result);
-        })
-        .sort({ createdAt: 'desc' });
-};
+    var Posts = require("../../models/posts")
+    exports.forumPost = function(req, res){
+    var limitNumber = parseInt(req.query.skip)
+    Posts.post.find({},(err, result) =>{
+        res.send(result)}).sort({'createdAt': 'desc'}).skip(limitNumber * 10).limit(10)
+    }
 
-exports.fetchPostDetail = (req, res) => {
-    Posts.post.findById(req.params.id, (err, result) => {
-        res.send(result);
-    });
-};
+    exports.fetchPostDetail = function (req, res){
+    Posts.post.findById(req.params.id,(err, result) =>{
+        res.send(result)})
+    }
 
-exports.fetchUserPost = (req, res) => {
-    Posts.post
-        .find({ user_id: req.params.id }, (err, result) => {
-            res.send(result);
-        })
-        .sort({ createdAt: 'desc' });
-};
+    exports.fetchUserPost = function(req, res){
+        var limitNumber = parseInt(req.query.limit)
+    Posts.post.find({user_id : req.params.id},(err, result) =>{
+        
+            res.send(result)}).sort({'createdAt': 'desc'}).limit(limitNumber)
+    }
 
-exports.fetchPostCategories = (req, res) => {
-    Post_category.post_category.find({}, (err, result) => {
-        res.send(result);
-    });
-};
+    var Post_category = require("../../models/post_category")
+    exports.fetchPostCategories = function (req, res){
+        Post_category.post_category.find({},(err, result) =>{
+            res.send(result)})
+    }
+
+
